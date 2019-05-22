@@ -1,15 +1,15 @@
 """
+...
 """
 
 import random
 from typing import Union, Callable
 
-from wheezy.captcha.comp import Draw
-from wheezy.captcha.comp import Image
-from wheezy.captcha.comp import ImageFilter
-from wheezy.captcha.comp import getrgb
-from wheezy.captcha.comp import truetype
-from wheezy.captcha.comp import xrange
+from PIL import Image
+from PIL import ImageFilter
+from PIL.ImageColor import getrgb
+from PIL.ImageDraw import Draw
+from PIL.ImageFont import truetype
 
 
 def captcha(drawings, width=200, height=75):
@@ -46,7 +46,7 @@ def smooth():
 
 def curve(color='#5C87B2', width=4, number=6):
     """验证码添加干扰线"""
-    from wheezy.captcha.bezier import make_bezier
+    from .bezier import make_bezier
     if not callable(color):
         c = getrgb(color)
 
@@ -84,7 +84,7 @@ def noise(number=50, color='#EEEECC', level=2):
         dy = height / 10
         height = height - dy
         draw = Draw(image_)
-        for i in xrange(number):
+        for i in range(number):
             x = int(random.uniform(dx, width))
             y = int(random.uniform(dy, height))
             draw.line(((x, y), (x + level, y)), fill=color(), width=level)
@@ -199,33 +199,3 @@ def rotate(angle=25):
         return image_.rotate(
             random.uniform(-angle, angle), Image.BILINEAR, expand=1)
     return drawer
-
-
-if __name__ == '__main__':
-    import string
-    import os
-
-    color_choices = ('#674331', '#515329', '#725a38', '#68483e', '#7b2616', '#53595f')
-
-    def random_color():
-        return random.choice(color_choices)
-
-    current_path = os.path.split(os.path.realpath(__file__))[0]
-    captcha_image = captcha(drawings=[
-        background('#a5a4aa'),  # #a5a4aa #aeada8
-        text(fonts=[os.path.join(current_path, '../../../fonts/CourierNew-Bold.ttf'),
-                    os.path.join(current_path, '../../../fonts/Arial-Bold.ttf'),
-                    os.path.join(current_path, '../../../fonts/CourierNew.ttf'),
-                    os.path.join(current_path, '../../../fonts/Arial.ttf')],
-             color=random_color,
-             drawings=[
-                 # warp(),
-                 rotate(angle=45),
-                 offset()
-             ], squeeze_factor=0.6),
-        curve(),
-        noise(),
-        smooth()
-    ], width=203, height=66)
-    image = captcha_image(random.sample(string.ascii_uppercase + string.digits, 6))
-    image.save('sample.jpg', 'JPEG', quality=75)
