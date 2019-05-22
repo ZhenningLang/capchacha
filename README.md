@@ -1,6 +1,6 @@
-# CaptchaCha
+# Captchacha
 
-CaptchaCha is a lightweight captcha generation library, 
+Captchacha is a lightweight captcha generation library, 
 which is originally forked from 
 [wheezy.captcha](https://github.com/ContextLogic/wheezy-captcha)
 
